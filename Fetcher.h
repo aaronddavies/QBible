@@ -14,6 +14,8 @@ class Fetcher : public QObject
 {
     Q_OBJECT
 public:
+    typedef QSharedPointer<Fetcher> Ptr;
+
     explicit Fetcher(QObject *parent = 0);
     virtual ~Fetcher();
 

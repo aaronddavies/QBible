@@ -15,4 +15,5 @@ HEADERS += \
     ScriptureModel.h
 
 DISTFILES += \
-    bible-sqlite.db
+    bible-sqlite.db \
+    bible.db

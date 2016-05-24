@@ -1,17 +1,20 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
 #include "ScriptureModel.h"
 
 int main(int argc, char *argv[])
 {
-    //QGuiApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
 
-    //QQmlApplicationEngine engine;
-    //engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     Fetcher::Ptr fetcher(new Fetcher());
     ScriptureModel scripture(fetcher);
-    Q_UNUSED(scripture)
-    return 0;
-    //return app.exec();
+
+    QQmlApplicationEngine engine;
+    QQmlContext *context = engine.rootContext();
+    context->setContextProperty("scripture_model", &scripture);
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
+    app.exec();
 }

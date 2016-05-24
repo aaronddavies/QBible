@@ -6,6 +6,9 @@
 #include <QtSql>
 #include "Defs.h"
 
+QStringList const BAD = {"{.*}", "\\\\", "&gt; "};
+QString const EMPTY = "";
+
 /**
  * @brief The Fetcher class
  * Provides an interface to the scripture database.
@@ -25,6 +28,19 @@ public:
      * @param chapter
      */
     void fetchChapter(QStringList &result, int const book, int const chapter);
+
+    /**
+     * @brief fetchTitle - Fetches the title of a book.
+     * @param result
+     * @param book
+     */
+    QString fetchTitle(int const book);
+
+    /**
+     * @brief chapterCount
+     * @return
+     */
+    int chapterCount(int const book);
 
 signals:
 

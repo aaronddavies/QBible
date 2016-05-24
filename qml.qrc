@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>IndexButton.qml</file>
+        <file>Books.qml</file>
     </qresource>
 </RCC>

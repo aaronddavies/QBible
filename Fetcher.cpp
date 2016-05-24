@@ -7,7 +7,7 @@ Fetcher::Fetcher(QObject *parent) :
 {
     _db = QSqlDatabase::addDatabase("QSQLITE");
     _db.setHostName("bibledb");
-    _db.setDatabaseName("bible-sqlite.db");
+    _db.setDatabaseName("bible.db");
     Q_ASSERT(_db.open());  // should be bundled in executable
 }
 
@@ -24,11 +24,31 @@ void Fetcher::fetchChapter(QStringList &result, const int book, const int chapte
 
     result.clear();
     QString verse;
-    QRegularExpression re("{.*}");
     while (query.next()) {
         verse = query.value(0).toString();
-        verse.replace(re, "");
+        foreach (QString const bad, BAD) {
+            verse.replace(QRegularExpression(bad), EMPTY);
+        }
         result.append(verse);
     }
-    qDebug() << result;
+}
+
+QString Fetcher::fetchTitle(const int book) {
+    QSqlQuery query;
+    query.prepare("SELECT n from key_english WHERE b IS :book");
+    query.bindValue(":book", book);
+    query.exec();
+
+    query.next();
+    return query.value(0).toString();
+}
+
+int Fetcher::chapterCount(const int book) {
+    QSqlQuery query;
+    query.prepare("SELECT MAX(c) from t_web WHERE b IS :book");
+    query.bindValue(":book", book);
+    query.exec();
+
+    query.next();
+    return query.value(0).toInt();
 }

@@ -29,8 +29,6 @@ ApplicationWindow {
         anchors.fill: parent
     }
 
-    Books { id: books }
-
     Row {
         spacing: column_spacing
         width: parent.width
@@ -74,7 +72,7 @@ ApplicationWindow {
                     highlight: index + 1 === current_chapter
                     fetchOnClick: function () {
                         current_chapter = index + 1;
-                        scripture_model.fetch(current_book, current_chapter)
+                        scripture_model.fetch(current_book, current_chapter);
                     }
                 }
             }
@@ -86,6 +84,7 @@ ApplicationWindow {
             width: parent.width - title_column_width - chapter_column_width - column_spacing * 4
             color: "transparent"
             ListView {
+                id: reading_window
                 model: scripture_model
                 anchors.fill: parent
                 delegate: Text {

@@ -46,7 +46,7 @@ void Fetcher::search(QStringList &verses, QStringList &locations, const QString 
     QString expression = request;
     expression.replace(' ', '%');
     QSqlQuery query;
-    query.prepare("SELECT b, c, v, t from t_web WHERE t LIKE :expr");
+    query.prepare("SELECT b, c, v, t from t_web WHERE t LIKE \":expr\"");
     query.bindValue(":expr", expression);
     query.exec();
     _convertText(query, 3, verses);

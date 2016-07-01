@@ -48,6 +48,8 @@ ApplicationWindow {
                     text: scripture_model.bookTitle(index + 1)
                     highlight: index + 1 === current_book
                     fetchOnClick: function () {
+                        search_window.visible = false;
+                        reading_window.visible = true;
                         current_book = index + 1;
                         current_chapter = 1;
                         scripture_model.fetch(current_book, 1);
@@ -71,6 +73,8 @@ ApplicationWindow {
                     text: index + 1
                     highlight: index + 1 === current_chapter
                     fetchOnClick: function () {
+                        search_window.visible = false;
+                        reading_window.visible = true;
                         current_chapter = index + 1;
                         scripture_model.fetch(current_book, current_chapter);
                     }
@@ -85,6 +89,7 @@ ApplicationWindow {
             color: "transparent"
             ListView {
                 id: reading_window
+                visible: true
                 model: scripture_model
                 anchors.fill: parent
                 delegate: Text {
@@ -93,6 +98,21 @@ ApplicationWindow {
                     color: font_color
                     font.pointSize: font_size
                     text: verse + " " + scripture
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignJustify
+                }
+            }
+            ListView {
+                id: search_window
+                visible: false
+                model: search_model
+                anchors.fill: parent
+                delegate: Text {
+                    id: search_text
+                    width: parent.width
+                    color: font_color
+                    font.pointSize: font_size
+                    text: location + " " + scripture
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignJustify
                 }

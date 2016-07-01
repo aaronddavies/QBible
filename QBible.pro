@@ -5,14 +5,16 @@ CONFIG += c++11
 
 SOURCES += main.cpp \
     Fetcher.cpp \
-    ScriptureModel.cpp
+    ScriptureModel.cpp \
+    SearchModel.cpp
 
 RESOURCES += qml.qrc
 
 HEADERS += \
     Fetcher.h \
     Defs.h \
-    ScriptureModel.h
+    ScriptureModel.h \
+    SearchModel.h
 
 DISTFILES += \
     bible-sqlite.db \

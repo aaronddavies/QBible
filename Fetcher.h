@@ -42,11 +42,30 @@ public:
      */
     int chapterCount(int const book);
 
-signals:
-
-public slots:
+    /**
+     * @brief search - Finds verses and their locations that contain the requested text.
+     * The search is an AND on each word in the order they appear in the string,
+     *   allowing other text in between.
+     * @param request
+     * @return
+     */
+    void search(QStringList &verses, QStringList &locations, QString const request);
 
 private:
+    /**
+     * @brief convertText - Clean up the text in the query and fill up the string list.
+     * @param query
+     * @param result
+     */
+    void _convertText(QSqlQuery query, int const column, QStringList &result);
+
+    /**
+     * @brief _locations - Provides the chapter and verse locations of each verse in the query.
+     * @param query
+     * @param result
+     */
+    void _locations(QSqlQuery query, QStringList &result);
+
     QSqlDatabase _db;
 };
 

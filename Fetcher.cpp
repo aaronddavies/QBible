@@ -47,14 +47,28 @@ int Fetcher::chapterCount(const int book) {
 
 void Fetcher::search(QStringList &verses, QStringList &locations, const QString request) {
     QString expression = request;
-    expression.replace(' ', '%');
+    expression.replace(DELIMITER, '%');
     QSqlQuery query;
     query.prepare(QString("SELECT b, c, v, t from t_web WHERE t LIKE '\%%1\%'").arg(expression));
     query.exec();
     verses.clear();
     locations.clear();
     while (query.next()) {
-        verses.append(_convertText(query.value(3)));
+        QString verse = _convertText(query.value(3));
+        QStringList keywords = request.split(DELIMITER);
+        int highlight_count = 0;
+        foreach (QString const key, keywords) {
+            int loc = verse.indexOf(key, 0, Qt::CaseInsensitive);
+            while (loc >= 0) {
+                verse.insert(loc, BEGIN_HIGHLIGHT);
+                verse.insert(loc + key.length() + BEGIN_HIGHLIGHT.length(), END_HIGHLIGHT);
+                int nextLoc = loc + key.length() + BEGIN_HIGHLIGHT.length() + END_HIGHLIGHT.length();
+                loc = verse.indexOf(key, nextLoc, Qt::CaseInsensitive);
+                ++highlight_count;
+            }
+        }
+        if (!highlight_count) { continue; } // guard in case the keyword was only in the removed "bad" expressions
+        verses.append(verse);
         locations.append(_locationDisplay(query.value(0), query.value(1), query.value(2)));
     }
 }

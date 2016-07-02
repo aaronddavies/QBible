@@ -52,7 +52,7 @@ ApplicationWindow {
                 border.color: font_color
                 border.width: border_width
                 radius: rect_radius
-                TextEdit {
+                TextInput {
                     id: search_box
                     color: font_color
                     text: ""
@@ -64,10 +64,14 @@ ApplicationWindow {
                     onFocusChanged: {
                         text = ""
                     }
+                    onAccepted: {
+                        search_button.fetchOnClick()
+                    }
                 }
             }
 
             IndexButton {
+                id: search_button
                 width: title_column_width
                 height: parent.height
                 text: "Search"

@@ -34,5 +34,8 @@ void SearchModel::search(const QString request) {
     _verses.clear();
     _locations.clear();
     _scripture->search(_verses, _locations, request);
+    if (_verses.count() == 0) {
+        _verses.append(NO_SEARCH_RESULTS);
+    }
     emit endResetModel();
 }

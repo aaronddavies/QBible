@@ -21,7 +21,10 @@ void Fetcher::fetchChapter(QStringList &result, const int book, const int chapte
     query.bindValue(":book", book);
     query.bindValue(":chapter", chapter);
     query.exec();
-    _convertText(query, 0, result);
+    result.clear();
+    while (query.next()) {
+        result.append(_convertText(query.value(0)));
+    }
 }
 
 QString Fetcher::fetchTitle(const int book) {
@@ -46,31 +49,25 @@ void Fetcher::search(QStringList &verses, QStringList &locations, const QString 
     QString expression = request;
     expression.replace(' ', '%');
     QSqlQuery query;
-    query.prepare("SELECT b, c, v, t from t_web WHERE t LIKE \":expr\"");
-    query.bindValue(":expr", expression);
+    query.prepare(QString("SELECT b, c, v, t from t_web WHERE t LIKE '\%%1\%'").arg(expression));
     query.exec();
-    _convertText(query, 3, verses);
-    _locations(query, locations);
-}
-
-void Fetcher::_convertText(QSqlQuery query, int const column, QStringList &result) {
-    result.clear();
-    QString verse;
+    verses.clear();
+    locations.clear();
     while (query.next()) {
-        verse = query.value(column).toString();
-        foreach (QString const bad, BAD) {
-            verse.replace(QRegularExpression(bad), EMPTY);
-        }
-        result.append(verse);
+        verses.append(_convertText(query.value(3)));
+        locations.append(_locationDisplay(query.value(0), query.value(1), query.value(2)));
     }
 }
 
-void Fetcher::_locations(QSqlQuery query, QStringList &result) {
-    result.clear();
-    while (query.next()) {
-        int book = query.value(1).toInt();
-        QString title = fetchTitle(book);
-        QString loc = QString("%1 %2:%3").arg(title, query.value(2).toString(), query.value(3).toString());
-        result.append(loc);
+QString Fetcher::_convertText(QVariant const value) {
+    QString verse = value.toString();
+    foreach (QString const bad, BAD) {
+        verse.replace(QRegularExpression(bad), EMPTY);
     }
+    return verse;
+}
+
+QString Fetcher::_locationDisplay(QVariant const book, QVariant const chapter, QVariant const verse) {
+    QString title = fetchTitle(book.toInt());
+    return QString("%1 %2:%3").arg(title, chapter.toString(), verse.toString());
 }

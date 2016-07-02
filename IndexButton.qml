@@ -4,11 +4,8 @@ import QtQuick.Controls.Styles 1.2
 
 Item {
     id: root
-    height: 30
+    height: row_height
 
-    property int radius: 2
-    property string border_color: font_color
-    property int border_width: 1
     property alias text: text_item.text
     property bool highlight: false
 
@@ -17,9 +14,9 @@ Item {
     Rectangle {
         id: base_rect
         anchors.fill: parent
-        border.color: root.border_color
-        border.width: root.border_width
-        radius: root.radius
+        border.color: border_color
+        border.width: border_width
+        radius: rect_radius
         color: mouse.pressed || highlight ? highlight_color : background_color
     }
 

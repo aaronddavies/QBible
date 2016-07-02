@@ -53,18 +53,18 @@ public:
 
 private:
     /**
-     * @brief convertText - Clean up the text in the query and fill up the string list.
+     * @brief convertText - Cleans up the text from the query.
      * @param query
      * @param result
      */
-    void _convertText(QSqlQuery query, int const column, QStringList &result);
+    QString _convertText(QVariant const value);
 
     /**
-     * @brief _locations - Provides the chapter and verse locations of each verse in the query.
+     * @brief _locations - Provides a formatted display string of the chapter and verse.
      * @param query
      * @param result
      */
-    void _locations(QSqlQuery query, QStringList &result);
+    QString _locationDisplay(QVariant const book, QVariant const chapter, QVariant const verse);
 
     QSqlDatabase _db;
 };

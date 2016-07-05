@@ -9,7 +9,7 @@ static int constexpr DEFAULT_CHAPTER = 1;
 QString const BEGIN_HIGHLIGHT = "<b>";
 QString const END_HIGHLIGHT = "</b>";
 QString const NO_SEARCH_RESULTS = "<i>No results.</i>";
-static char constexpr DELIMITER = ' ';
+QString const SQL_DELIMITER = "%";
 
 namespace Roles {
 

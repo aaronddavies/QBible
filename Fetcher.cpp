@@ -45,31 +45,49 @@ int Fetcher::chapterCount(const int book) {
     return query.value(0).toInt();
 }
 
-void Fetcher::search(QStringList &verses, QStringList &locations, const QString request) {
-    QString expression = request;
-    expression.replace(DELIMITER, '%');
-    QSqlQuery query;
-    query.prepare(QString("SELECT b, c, v, t from t_web WHERE t LIKE '\%%1\%'").arg(expression));
-    query.exec();
+void Fetcher::search(QStringList &verses, QStringList &locations, QString request) {
     verses.clear();
     locations.clear();
+    _cleanSearchText(request);
+    if (request.isEmpty()) { return; }
+    QSqlQuery query;
+    QString queryString = QString("SELECT b, c, v, t from t_web WHERE t LIKE '\%%1\%'").arg(request);
+    query.prepare(queryString);
+    query.exec();
     while (query.next()) {
         QString verse = _convertText(query.value(3));
-        QStringList keywords = request.split(DELIMITER);
-        int highlight_count = 0;
-        foreach (QString const key, keywords) {
-            int loc = verse.indexOf(key, 0, Qt::CaseInsensitive);
-            while (loc >= 0) {
-                verse.insert(loc, BEGIN_HIGHLIGHT);
-                verse.insert(loc + key.length() + BEGIN_HIGHLIGHT.length(), END_HIGHLIGHT);
-                int nextLoc = loc + key.length() + BEGIN_HIGHLIGHT.length() + END_HIGHLIGHT.length();
-                loc = verse.indexOf(key, nextLoc, Qt::CaseInsensitive);
-                ++highlight_count;
-            }
-        }
-        if (!highlight_count) { continue; } // guard in case the keyword was only in the removed "bad" expressions
+        if (!_highlightSearchWords(verse, request)) { continue; }
         verses.append(verse);
         locations.append(_locationDisplay(query.value(0), query.value(1), query.value(2)));
+    }
+}
+
+int Fetcher::_highlightSearchWords(QString &verse, const QString request) {
+    QStringList keywords = request.split(SQL_DELIMITER);
+    int highlight_count = 0;
+    foreach (QString const key, keywords) {
+        if (key.isEmpty()) { continue; }
+        int loc = verse.indexOf(key, 0, Qt::CaseInsensitive);
+        while (loc >= 0) {
+            verse.insert(loc, BEGIN_HIGHLIGHT);
+            verse.insert(loc + key.length() + BEGIN_HIGHLIGHT.length(), END_HIGHLIGHT);
+            int nextLoc = loc + key.length() + BEGIN_HIGHLIGHT.length() + END_HIGHLIGHT.length();
+            loc = verse.indexOf(key, nextLoc, Qt::CaseInsensitive);
+            ++highlight_count;
+        }
+    }
+    return highlight_count;
+}
+
+void Fetcher::_cleanSearchText(QString &request) {
+    QMap<QString, QString> replacements({
+        {"^\\s*$", ""},  // clear if all whitespace
+        {"^\\s*", ""},  // remove all leading whitespace
+        {"\\s*$", ""},  // remove all ending whitespace
+        {"\\s+", SQL_DELIMITER},  // replace any internal whitespace with single delimiter
+    });
+    foreach (QString const key, replacements.keys()) {
+        request = request.replace(QRegularExpression(key), replacements.value(key));
     }
 }
 

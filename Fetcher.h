@@ -53,6 +53,20 @@ public:
 
 private:
     /**
+     * @brief _cleanSearchText - Cleans up the search text.
+     * @param request
+     */
+    void _cleanSearchText(QString &request);
+
+    /**
+     * @brief _highlightSearchWords - Highlights the instances of the words in the request that are found in the verse.
+     * @param verse
+     * @param request
+     * @return the number of words highlighted
+     */
+    int _highlightSearchWords(QString &verse, const QString request);
+
+    /**
      * @brief convertText - Cleans up the text from the query.
      * @param query
      * @param result

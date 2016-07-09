@@ -45,9 +45,8 @@ int Fetcher::chapterCount(const int book) {
     return query.value(0).toInt();
 }
 
-void Fetcher::search(QStringList &verses, QStringList &locations, QString request) {
-    verses.clear();
-    locations.clear();
+void Fetcher::search(QVector<FetchedVerse> &results, QString request) {
+    results.clear();
     _cleanSearchText(request);
     if (request.isEmpty()) { return; }
     QSqlQuery query;
@@ -55,10 +54,15 @@ void Fetcher::search(QStringList &verses, QStringList &locations, QString reques
     query.prepare(queryString);
     query.exec();
     while (query.next()) {
-        QString verse = _convertText(query.value(3));
-        if (!_highlightSearchWords(verse, request)) { continue; }
-        verses.append(verse);
-        locations.append(_locationDisplay(query.value(0), query.value(1), query.value(2)));
+        QString verseText = _convertText(query.value(3));
+        if (!_highlightSearchWords(verseText, request)) { continue; }
+        FetchedVerse fetched;
+        fetched.book = query.value(0).toInt();
+        fetched.chapter = query.value(1).toInt();
+        fetched.verse = query.value(2).toInt();
+        fetched.text = verseText;
+        fetched.location = _locationDisplay(query.value(0), query.value(1), query.value(2));
+        results.push_back(fetched);
     }
 }
 

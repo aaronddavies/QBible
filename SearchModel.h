@@ -20,10 +20,11 @@ public:
     Q_INVOKABLE QHash<int, QByteArray> roleNames() const;
 
     Q_INVOKABLE void search(QString const request);
+    Q_INVOKABLE int bookAt(int const row) const;
+    Q_INVOKABLE int chapterAt(int const row) const;
 
 private:
-    QStringList _verses;
-    QStringList _locations;
+    QVector<FetchedVerse> _results;
     Fetcher::Ptr _scripture;
 };
 

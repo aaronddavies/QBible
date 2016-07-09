@@ -25,4 +25,12 @@ QHash<int, QByteArray> const MAP({
 
 }
 
+typedef struct {
+    int book;
+    int chapter;
+    int verse;
+    QString text;
+    QString location;
+} FetchedVerse;
+
 #endif // DEFS_H

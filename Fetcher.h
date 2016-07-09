@@ -49,7 +49,7 @@ public:
      * @param request
      * @return
      */
-    void search(QStringList &verses, QStringList &locations, QString const request);
+    void search(QVector<FetchedVerse> &results, QString const request);
 
 private:
     /**

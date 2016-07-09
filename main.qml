@@ -166,14 +166,19 @@ ApplicationWindow {
                     visible: false
                     model: search_model
                     anchors.fill: parent
-                    delegate: Text {
+                    delegate: ClickableText {
                         id: search_text
                         width: parent.width
-                        color: font_color
-                        font.pointSize: font_size
                         text: "<b>" + location + "</b>" + " " + scripture
-                        wrapMode: Text.WordWrap
-                        horizontalAlignment: Text.AlignJustify
+                        fetchOnClick: function () {
+                            search_box.focus = false;
+                            search_window.visible = false;
+                            reading_window.visible = true;
+                            current_book = search_model.bookAt(index);
+                            current_chapter = search_model.chapterAt(index);
+                            scripture_model.fetch(current_book, current_chapter);
+                            reading_window.positionViewAtBeginning();
+                        }
                     }
                 }
             }
